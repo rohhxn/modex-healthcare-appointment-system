@@ -1,0 +1,199 @@
+.booking-page {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  padding-bottom: 2rem;
+}
+
+.page-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+}
+
+.header-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  color: white;
+  font-size: 2rem;
+}
+
+.btn-back {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.booking-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.doctor-summary {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--primary-color);
+}
+
+.doctor-summary h2 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.doctor-summary .specialization {
+  display: inline-block;
+  background-color: var(--light-bg);
+  color: var(--primary-color);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.doctor-summary .clinic {
+  color: var(--text-secondary);
+  margin: 0.5rem 0;
+}
+
+.slots-section {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+.slots-section h3 {
+  margin-top: 0;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.slot-card {
+  padding: 1.5rem;
+  border: 2px solid var(--border-color);
+  border-radius: 0.75rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: white;
+}
+
+.slot-card:not(.disabled):hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  transform: translateY(-2px);
+}
+
+.slot-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--light-bg);
+}
+
+.slot-date {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.slot-time {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.slot-duration {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.slot-status {
+  background-color: var(--light-bg);
+  color: var(--text-secondary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.confirmation-section {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.confirmation-section h3 {
+  margin-top: 0;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.confirmation-details {
+  background-color: var(--light-bg);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.confirmation-details p {
+  margin: 0.5rem 0;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.button-group .btn {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+}

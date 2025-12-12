@@ -8,5 +8,3 @@ yarn-debug.log*
 README.md
 docs/
 *.test.ts
-src/
-tsconfig.json

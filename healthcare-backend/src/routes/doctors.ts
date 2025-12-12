@@ -1,10 +1,20 @@
 // @ts-nocheck
 import { Router, Request, Response, NextFunction } from 'express';
+import mongoose from 'mongoose';
 import { Doctor } from '../models/Doctor';
 import { TimeSlot } from '../models/TimeSlot';
 import { AppError } from '../middleware/errorHandler';
 
 const router = Router();
+
+function assertValidDoctorId(id: string) {
+  if (!id || id === 'undefined' || id === 'null') {
+    throw new AppError(400, 'doctorId is required');
+  }
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new AppError(400, 'doctorId must be a valid ObjectId');
+  }
+}
 
 /**
  * POST /api/doctors
@@ -92,6 +102,8 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { from_date, to_date } = req.query;
 
+    assertValidDoctorId(id);
+
     const doctor = await Doctor.getById(id);
     const availableSlots = await TimeSlot.getAvailableSlots(
       id,
@@ -121,6 +133,8 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const updates = req.body;
 
+    assertValidDoctorId(id);
+
     const doctor = await Doctor.update(id, updates);
 
     res.status(200).json({
@@ -141,6 +155,8 @@ router.post('/:id/time-slots', async (req: Request, res: Response, next: NextFun
   try {
     const { id } = req.params;
     const { slot_date, slot_time, duration_minutes, max_capacity } = req.body;
+
+    assertValidDoctorId(id);
 
     // Validation
     if (!slot_date || !slot_time) {
@@ -177,6 +193,8 @@ router.post('/:id/time-slots/bulk', async (req: Request, res: Response, next: Ne
     const { id } = req.params;
     const { slots } = req.body;
 
+    assertValidDoctorId(id);
+
     if (!Array.isArray(slots) || slots.length === 0) {
       throw new AppError(400, 'Invalid slots array provided');
     }
@@ -205,6 +223,8 @@ router.get('/:id/time-slots', async (req: Request, res: Response, next: NextFunc
     const { id } = req.params;
     const { from_date, to_date } = req.query;
 
+    assertValidDoctorId(id);
+
     const slots = await TimeSlot.getDoctorSlots(id, from_date as string, to_date as string);
 
     res.status(200).json({
@@ -225,6 +245,8 @@ router.get('/:id/available-slots', async (req: Request, res: Response, next: Nex
   try {
     const { id } = req.params;
     const { from_date, to_date } = req.query;
+
+    assertValidDoctorId(id);
 
     const slots = await TimeSlot.getAvailableSlots(
       id,

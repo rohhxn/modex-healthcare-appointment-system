@@ -1,6 +1,15 @@
 import mongoose from 'mongoose';
 import { AppError } from '../middleware/errorHandler';
 
+function assertValidObjectId(id: string, fieldName: string) {
+  if (!id || id === 'undefined' || id === 'null') {
+    throw new AppError(400, `${fieldName} is required`);
+  }
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new AppError(400, `${fieldName} must be a valid ObjectId`);
+  }
+}
+
 const TimeSlotSchema = new mongoose.Schema({
   doctor_id: mongoose.Schema.Types.ObjectId,
   slot_date: String,
@@ -27,6 +36,7 @@ export class TimeSlot {
     max_capacity: number;
   }) {
     try {
+      assertValidObjectId(slotData.doctor_id, 'doctor_id');
       const doc = await TimeSlotModel.create(slotData);
       return doc.toObject();
     } catch (error) {
@@ -35,6 +45,7 @@ export class TimeSlot {
   }
 
   static async getByDoctorAndDate(doctorId: string, date: string) {
+    assertValidObjectId(doctorId, 'doctor_id');
     const docs = await TimeSlotModel.find({
       doctor_id: doctorId,
       slot_date: date,
@@ -44,6 +55,7 @@ export class TimeSlot {
   }
 
   static async getById(id: string) {
+    assertValidObjectId(id, 'time_slot_id');
     const doc = await TimeSlotModel.findById(id);
     if (!doc) {
       throw new AppError(404, 'Time slot not found');
@@ -52,6 +64,7 @@ export class TimeSlot {
   }
 
   static async update(id: string, updates: Record<string, any>) {
+    assertValidObjectId(id, 'time_slot_id');
     const allowedFields = ['current_bookings', 'status'];
     const filtered = Object.keys(updates)
       .filter((key) => allowedFields.includes(key))
@@ -78,6 +91,7 @@ export class TimeSlot {
   }
 
   static async delete(id: string) {
+    assertValidObjectId(id, 'time_slot_id');
     const doc = await TimeSlotModel.findByIdAndDelete(id);
     if (!doc) {
       throw new AppError(404, 'Time slot not found');
@@ -86,6 +100,7 @@ export class TimeSlot {
   }
 
   static async getAvailableSlots(doctorId: string, fromDate?: string, toDate?: string) {
+    assertValidObjectId(doctorId, 'doctor_id');
     const query: Record<string, any> = { doctor_id: doctorId, status: 'AVAILABLE' };
     if (fromDate || toDate) {
       query.slot_date = {};
@@ -97,6 +112,7 @@ export class TimeSlot {
   }
 
   static async createBulk(doctorId: string, slots: Array<{slot_date: string; slot_time: string; max_capacity: number}>) {
+    assertValidObjectId(doctorId, 'doctor_id');
     const docs = await TimeSlotModel.insertMany(
       slots.map(slot => ({ doctor_id: doctorId, ...slot }))
     );
@@ -104,6 +120,7 @@ export class TimeSlot {
   }
 
   static async getDoctorSlots(doctorId: string, fromDate?: string, toDate?: string) {
+    assertValidObjectId(doctorId, 'doctor_id');
     const query: Record<string, any> = { doctor_id: doctorId };
     if (fromDate || toDate) {
       query.slot_date = {};

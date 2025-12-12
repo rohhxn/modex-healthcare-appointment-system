@@ -23,9 +23,9 @@ const AppointmentModel = mongoose.model('Appointment', AppointmentSchema);
  */
 export class Appointment {
   static async create(appointmentData: {
-    patient_id: string;
-    doctor_id: string;
-    time_slot_id: string;
+    patient_id: any;
+    doctor_id: any;
+    time_slot_id: any;
     appointment_date: string;
     appointment_time: string;
     reason_for_visit?: string;

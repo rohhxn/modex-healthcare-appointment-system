@@ -3,12 +3,25 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { Appointment } from '../models/Appointment';
 import { Patient } from '../models/Patient';
 import { AppError } from '../middleware/errorHandler';
+import mongoose from 'mongoose';
 const router = Router();
 
 // Helper function to validate UUID format
 function isValidUUID(id: string): boolean {
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   return uuidRegex.test(id);
+}
+
+const isTruthyString = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0;
+
+function toObjectIdOrThrow(id: string, fieldName: string) {
+  if (!isTruthyString(id)) {
+    throw new AppError(400, `${fieldName} is required`);
+  }
+  if (!mongoose.isValidObjectId(id)) {
+    throw new AppError(400, `${fieldName} is invalid`);
+  }
+  return new mongoose.Types.ObjectId(id);
 }
 
 /**
@@ -30,7 +43,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     } = req.body;
 
     // Validation
-    if (!doctor_id || !time_slot_id || !appointment_date || !appointment_time) {
+    if (!doctor_id || !time_slot_id || !appointment_date || !appointment_time || !reason_for_visit) {
       throw new AppError(400, 'Missing required fields');
     }
 
@@ -38,11 +51,16 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
     // If patient_id not provided, try to find/create patient by email
     if (!patientId && patient_email) {
-      let patient = await Patient.getByEmail(patient_email);
-      if (!patient) {
-        throw new AppError(400, 'Patient not found. Please register first or provide a valid patient_id');
+      try {
+        const patient = await Patient.getByEmail(patient_email);
+        patientId = (patient as any).id;
+      } catch (e: any) {
+        // Patient.getByEmail throws AppError(404) when not found.
+        if (e instanceof AppError && e.statusCode === 404) {
+          throw new AppError(400, 'Patient not found. Please register first or provide a valid patient_id');
+        }
+        throw e;
       }
-      patientId = (patient as any).id;
     }
 
     // If we still have a patientId that isn't a UUID (like "pat001"), try to look up by email
@@ -51,11 +69,14 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
         throw new AppError(400, 'Patient ID format is invalid. Please log in with your email or register.');
       }
       // Try to find patient by email
-      let patient = await Patient.getByEmail(patient_email);
-      if (patient) {
+      try {
+        const patient = await Patient.getByEmail(patient_email);
         patientId = (patient as any).id;
-      } else {
-        throw new AppError(400, 'Patient not found. Please register with email: ' + patient_email);
+      } catch (e: any) {
+        if (e instanceof AppError && e.statusCode === 404) {
+          throw new AppError(400, 'Patient not found. Please register with email: ' + patient_email);
+        }
+        throw e;
       }
     }
 
@@ -63,11 +84,15 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       throw new AppError(400, 'Either patient_id or patient_email must be provided');
     }
 
+    const patientObjectId = toObjectIdOrThrow(patientId, 'patient_id');
+    const doctorObjectId = toObjectIdOrThrow(doctor_id, 'doctor_id');
+    const slotObjectId = toObjectIdOrThrow(time_slot_id, 'time_slot_id');
+
     // Create appointment with concurrency-safe booking
     const appointment = await Appointment.create({
-      patient_id: patientId,
-      doctor_id,
-      time_slot_id,
+      patient_id: patientObjectId,
+      doctor_id: doctorObjectId,
+      time_slot_id: slotObjectId,
       appointment_date,
       appointment_time,
       reason_for_visit,

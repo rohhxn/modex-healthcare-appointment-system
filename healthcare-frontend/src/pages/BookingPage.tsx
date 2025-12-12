@@ -5,6 +5,9 @@ import { doctorService, timeSlotService, appointmentService, patientService } fr
 import { Doctor, TimeSlot, Patient } from '../types';
 import '../styles/BookingPage.css';
 
+const isTruthyId = (value: unknown): value is string =>
+  typeof value === 'string' && value.trim().length > 0 && value !== 'undefined' && value !== 'null';
+
 const BookingPage: React.FC = () => {
   const { doctorId } = useParams<{ doctorId: string }>();
   const navigate = useNavigate();
@@ -29,8 +32,12 @@ const BookingPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      if (!doctorId) {
-        setError('Doctor ID is missing');
+      if (!isTruthyId(doctorId)) {
+        setDoctor(null);
+        setSlots([]);
+        setSelectedSlot(null);
+        setBookingStep('select-slot');
+        setError('Invalid doctor link. Please go back and select a doctor again.');
         return;
       }
 
@@ -64,8 +71,10 @@ const BookingPage: React.FC = () => {
       return;
     }
 
-    if (!userId) {
-      setError('User ID is missing. Please log out and log back in.');
+    // This app uses a lightweight "login" that stores a userId in local storage.
+    // Make sure we never call the API with an undefined/invalid patient_id.
+    if (!isTruthyId(userId)) {
+      setError('Please log in again before booking an appointment.');
       return;
     }
 

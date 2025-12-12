@@ -8,7 +8,8 @@
     "build": "tsc -p ./tsconfig.json",
     "start": "node dist/index.js",
     "db:init": "ts-node src/scripts/initDb.ts",
-    "db:seed-demo": "ts-node src/scripts/seedDemoMongo.ts"
+    "db:seed-demo": "ts-node src/scripts/seedDemoMongo.ts",
+    "smoke:booking": "ts-node src/scripts/smokeBooking.ts"
   },
   "keywords": [
     "healthcare",

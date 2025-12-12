@@ -1,7 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "build": {
+    "cmd": "npm run build",
+    "output": "dist"
+  },
   "installCommand": "npm install",
   "env": {
     "NODE_ENV": "production"

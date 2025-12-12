@@ -33,6 +33,11 @@ const RegisterPage: React.FC = () => {
   const [clinicAddress, setClinicAddress] = useState('');
   const [bio, setBio] = useState('');
 
+  const clearAlerts = () => {
+    if (error) setError(null);
+    if (success) setSuccess(null);
+  };
+
   const validateForm = (): boolean => {
     if (!name.trim()) {
       setError('Name is required');
@@ -118,11 +123,13 @@ const RegisterPage: React.FC = () => {
         const result = await response.json();
         const patientId = result.data.id;
 
-        // Store patient info in localStorage
-        localStorage.setItem('userId', patientId);
-        localStorage.setItem('userRole', 'patient');
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('userName', name);
+  // Store patient info in localStorage
+  localStorage.setItem('userId', patientId);
+  localStorage.setItem('userRole', 'patient');
+  localStorage.setItem('userEmail', email);
+  localStorage.setItem('userName', name);
+  // Password isn't used by backend yet, but keep it to align with UX.
+  localStorage.setItem('userPassword', password);
 
         setSuccess('Patient registration successful! Redirecting...');
         login('patient', patientId, email);
@@ -160,11 +167,13 @@ const RegisterPage: React.FC = () => {
         const result = await response.json();
         const doctorId = result.data.id;
 
-        // Store doctor info in localStorage
-        localStorage.setItem('userId', doctorId);
-        localStorage.setItem('userRole', 'admin');
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('userName', name);
+  // Store doctor info in localStorage
+  localStorage.setItem('userId', doctorId);
+  // AuthContext uses 'admin' for doctor experience (admin dashboard)
+  localStorage.setItem('userRole', 'admin');
+  localStorage.setItem('userEmail', email);
+  localStorage.setItem('userName', name);
+  localStorage.setItem('userPassword', password);
 
         setSuccess(
           'Doctor registration successful! You can now access the admin dashboard to manage your time slots.'
@@ -194,7 +203,7 @@ const RegisterPage: React.FC = () => {
           <button
             onClick={() => {
               setUserType('patient');
-              setError(null);
+              clearAlerts();
             }}
             className={`user-type-btn ${userType === 'patient' ? 'active' : ''}`}
           >
@@ -204,7 +213,7 @@ const RegisterPage: React.FC = () => {
           <button
             onClick={() => {
               setUserType('doctor');
-              setError(null);
+              clearAlerts();
             }}
             className={`user-type-btn ${userType === 'doctor' ? 'active' : ''}`}
           >
@@ -227,7 +236,10 @@ const RegisterPage: React.FC = () => {
                 id="name"
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (error) setError(null);
+                }}
                 placeholder="Enter your full name"
                 className="form-control"
                 required
@@ -241,7 +253,10 @@ const RegisterPage: React.FC = () => {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (error) setError(null);
+                  }}
                   placeholder="Enter your email"
                   className="form-control"
                   required
@@ -254,7 +269,10 @@ const RegisterPage: React.FC = () => {
                   id="phone"
                   type="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (error) setError(null);
+                  }}
                   placeholder="Enter your phone number"
                   className="form-control"
                   required
@@ -269,7 +287,10 @@ const RegisterPage: React.FC = () => {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError(null);
+                  }}
                   placeholder="Enter password (min 6 characters)"
                   className="form-control"
                   required
@@ -282,7 +303,10 @@ const RegisterPage: React.FC = () => {
                   id="confirmPassword"
                   type="password"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    if (error) setError(null);
+                  }}
                   placeholder="Confirm your password"
                   className="form-control"
                   required

@@ -8,7 +8,7 @@
     "build": "tsc -p ./tsconfig.json",
     "start": "node dist/index.js",
     "db:init": "ts-node src/scripts/initDb.ts",
-    "db:seed-slots": "ts-node src/scripts/createSampleSlots.ts"
+    "db:seed-demo": "ts-node src/scripts/seedDemoMongo.ts"
   },
   "keywords": [
     "healthcare",

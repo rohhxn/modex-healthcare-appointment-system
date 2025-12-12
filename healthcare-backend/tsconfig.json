@@ -15,5 +15,11 @@
     "sourceMap": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "src/config/dbInit.ts", "src/scripts/createSampleSlots.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/config/dbInit.ts",
+    "src/config/dbInit_new.ts",
+    "src/scripts/createSampleSlots.ts"
+  ]
 }

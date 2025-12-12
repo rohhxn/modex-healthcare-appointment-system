@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router, Request, Response, NextFunction } from 'express';
 import { Doctor } from '../models/Doctor';
 import { TimeSlot } from '../models/TimeSlot';

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/RegisterPage.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -100,7 +102,7 @@ const RegisterPage: React.FC = () => {
         };
 
         // Call the patient registration API
-        const response = await fetch('http://localhost:5000/api/patients', {
+        const response = await fetch(`${API_BASE_URL}/patients`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -142,7 +144,7 @@ const RegisterPage: React.FC = () => {
         };
 
         // Call the doctor registration API
-        const response = await fetch('http://localhost:5000/api/doctors', {
+        const response = await fetch(`${API_BASE_URL}/doctors`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

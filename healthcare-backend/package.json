@@ -27,6 +27,7 @@
     "mongoose": "^8.20.2",
     "pg": "^8.11.3",
     "serverless-http": "^3.2.0",
+    "typescript": "^5.3.3",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
@@ -36,7 +37,6 @@
     "@types/node": "^20.10.6",
     "@types/pg": "^8.11.2",
     "@types/uuid": "^9.0.7",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "ts-node": "^10.9.2"
   }
 }

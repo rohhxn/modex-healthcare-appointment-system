@@ -24,6 +24,11 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', message: 'Healthcare Appointment System is running' });
 });
 
+// Same health check under /api for reverse-proxy setups
+app.get('/api/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'OK', message: 'Healthcare Appointment System is running' });
+});
+
 // Lazy database initialization - connect on first request
 let dbConnected = false;
 const ensureDBConnected = async () => {

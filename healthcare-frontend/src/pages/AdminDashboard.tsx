@@ -86,8 +86,12 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
+
+      if (!doctorId || doctorId === 'undefined' || doctorId === 'null') {
+        throw new Error('Invalid doctor id. Please refresh and try again.');
+      }
       setSelectedDoctorForSlots(doctorId);
-      const slotsData = await doctorService.getAvailableSlots(doctorId);
+      const slotsData = await timeSlotService.getDoctorSlots(doctorId);
       setSlots(slotsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load slots');

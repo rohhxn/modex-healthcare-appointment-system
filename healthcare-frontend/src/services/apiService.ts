@@ -1,7 +1,9 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import { ApiResponse, Doctor, Patient, TimeSlot, Appointment } from '../types';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Default to same-origin /api so frontend+backend can be connected via Vercel rewrites/proxy.
+// If you deploy backend on a different host, set REACT_APP_API_URL to that host's /api.
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({

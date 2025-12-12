@@ -1,14 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "cd healthcare-backend && npm run build",
-  "outputDirectory": "healthcare-backend/dist",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "env": {
     "NODE_ENV": "production"
-  },
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "healthcare-backend/dist/index.js"
-    }
-  ]
+  }
 }

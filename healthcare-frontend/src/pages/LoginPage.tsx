@@ -20,10 +20,18 @@ const LoginPage: React.FC = () => {
   // auth endpoint without changing UX.
   async function resolveUserId(role: UserRole, email: string): Promise<string> {
     if (role === 'patient') {
-      const res = await apiClient.get('/patients/by-email/' + encodeURIComponent(email));
-      const id = (res.data as any)?.data?.id || (res.data as any)?.data?._id;
-      if (!id) throw new Error('Patient not found');
-      return id;
+      try {
+        const res = await apiClient.get('/patients/by-email/' + encodeURIComponent(email));
+        const id = (res.data as any)?.data?.id || (res.data as any)?.data?._id;
+        if (!id) throw new Error('Patient not found');
+        return id;
+      } catch (err: any) {
+        const status = err?.response?.status;
+        if (status === 404) {
+          throw new Error('Patient not found');
+        }
+        throw err;
+      }
     }
 
     // role === 'admin' (doctor)

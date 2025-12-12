@@ -9,6 +9,7 @@
     "start": "node dist/index.js",
     "db:init": "ts-node src/scripts/initDb.ts",
     "db:seed-demo": "ts-node src/scripts/seedDemoMongo.ts",
+    "db:reset-seed-demo": "ts-node src/scripts/resetAndSeedDemoMongo.ts",
     "smoke:booking": "ts-node src/scripts/smokeBooking.ts",
     "smoke:available-slots": "ts-node src/scripts/smokeAvailableSlots.ts"
   },

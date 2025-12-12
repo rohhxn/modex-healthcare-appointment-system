@@ -23,39 +23,54 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', message: 'Healthcare Appointment System is running' });
 });
 
-// Initialize database on startup
-const initializeApp = async () => {
-  try {
-    // Connect to MongoDB
-    await connectDB();
-
-    // Routes
-    app.use('/api/doctors', doctorRoutes);
-    app.use('/api/patients', patientRoutes);
-    app.use('/api/appointments', appointmentRoutes);
-
-    // Error handling middleware
-    app.use(errorHandler);
-
-    console.log('✅ App initialized successfully');
-  } catch (error) {
-    console.error('❌ Failed to initialize app:', error);
-    process.exit(1);
+// Lazy database initialization - connect on first request
+let dbConnected = false;
+const ensureDBConnected = async () => {
+  if (!dbConnected) {
+    try {
+      await connectDB();
+      dbConnected = true;
+    } catch (error) {
+      console.error('❌ Failed to connect to database:', error);
+      throw error;
+    }
   }
 };
 
-// Initialize the app
-initializeApp();
+// Middleware to ensure DB connection before routes
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await ensureDBConnected();
+    next();
+  } catch (error) {
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
+
+// Routes
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/patients', patientRoutes);
+app.use('/api/appointments', appointmentRoutes);
+
+// Error handling middleware
+app.use(errorHandler);
 
 // Export for Vercel serverless
 export const handler = serverless(app);
 
 // Local server startup (for local development)
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`🚀 Healthcare Appointment API running on port ${PORT}`);
-    console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
+  app.listen(PORT, async () => {
+    try {
+      await ensureDBConnected();
+      console.log(`🚀 Healthcare Appointment API running on port ${PORT}`);
+      console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
+    } catch (error) {
+      console.error('❌ Failed to start server:', error);
+      process.exit(1);
+    }
   });
 }
 
 export default app;
+
